@@ -2,7 +2,7 @@ import React from 'react';
 import GameHeader from './components/GameHeader';
 import ResourcePanel from './components/ResourcePanel';
 
-import GameMap from './components/GameMap';
+import GameMap from './components/GameMap/index';
 
 // 商店
 import ShopPanel from './components/shop/ShopPanel';
