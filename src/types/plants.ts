@@ -27,5 +27,12 @@ export type PlantType =
 export interface PlantedCrop {
   id: string;
   type: PlantType;
+  // 种下的时间
   plantedAt: number;
+  // 种下的位置
+  position: number;
+  // 成熟时间（毫秒）
+  growthTime: number;
+  // 是否成熟
+  isReady: boolean;
 }

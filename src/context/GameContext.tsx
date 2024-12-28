@@ -7,9 +7,13 @@ const initialState: GameState = {
   selectedShop: null,
   selectedPlant: null,
   selectedAnimal: null,
+  // 种下的作物
   plantedCrops: [],
+  // 拥有的动物
   ownedAnimals: [],
+  // 作物（未种下的）
   plants: new Map(),
+  // 拥有的动物
   animals: [],
   lastPurchaseTime: {},
 };

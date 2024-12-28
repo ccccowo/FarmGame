@@ -7,9 +7,9 @@ export interface GameState {
   // 商店打开选择
   selectedShop: string | null;
   // 种植选择
-  selectedPlant: string | null;
+  selectedPlant: PlantType | null;
   // 动物选择
-  selectedAnimal: string | null;
+  selectedAnimal: AnimalType | null;
   // 购买了的植物【key:植物类型，value:植物数组】
   plants: Map<PlantType, Plant[]>;
   // 动物
@@ -33,3 +33,5 @@ export type GameAction =
   | { type: 'SELECT_ANIMAL'; animal: string | null } 
   | { type: 'BUY_PLANT'; plantType: PlantType }
   | { type: 'BUY_ANIMAL'; animalType: AnimalType }
+  | { type: 'PLANT_PLANT'; position: number }
+  | { type: 'HARVEST_PLANT'; id: string }
