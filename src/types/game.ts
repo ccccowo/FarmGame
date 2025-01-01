@@ -25,12 +25,12 @@ export interface GameState {
 
 // ... 其他现有的类型定义 ...
 
-export type GameAction =
+export type GameAction = 
   // | { type: 'UPDATE_ANIMALS' }
   // | { type: 'COLLECT_ANIMAL_PRODUCTS' }
   | { type: 'SELECT_SHOP'; shop: string | null }
-  | { type: 'SELECT_PLANT'; plant: string | null }
-  | { type: 'SELECT_ANIMAL'; animal: string | null } 
+  | { type: 'SELECT_PLANT'; plant: PlantType | null }
+  | { type: 'SELECT_ANIMAL'; animal: AnimalType | null } 
   | { type: 'BUY_PLANT'; plantType: PlantType }
   | { type: 'BUY_ANIMAL'; animalType: AnimalType }
   | { type: 'PLANT_PLANT'; position: number }

@@ -9,7 +9,7 @@ interface MapCellProps {
   plantedCrop?: PlantedCrop;
 }
 
-export const MapCell: React.FC<MapCellProps> = ({ index, plantedCrop = null }) => {
+export const MapCell: React.FC<MapCellProps> = ({ index, plantedCrop }) => {
   const { state, dispatch } = useGameState();
   // 当没有种下作物时，并且有种植选择时，可以种植
   const canPlant = !plantedCrop && state.selectedPlant !== null
