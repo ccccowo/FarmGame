@@ -54,7 +54,10 @@ export const MapCell: React.FC<MapCellProps> = ({ index, plantedCrop }) => {
     }
 
     // 计算成熟还需要多少时间（总时间-（now - 种下时间））
-    const timeRemaining = Math.ceil((plantedCrop.growthTime - (now - plantedCrop.plantedAt)) / 1000);
+    const timeRemaining = Math.max(0, Math.ceil((plantedCrop.growthTime - (now - plantedCrop.plantedAt)) / 1000));
+    if(timeRemaining == 0){
+      return `${plant.name} 已经成熟`;
+    }
     return `${plant.name} (还需 ${timeRemaining} 秒)`;
   };
 
