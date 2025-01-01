@@ -18,26 +18,15 @@ const initialState: GameState = {
   lastPurchaseTime: {},
 };
 
-// 创建游戏上下文
 const GameContext = createContext<{
   state: GameState;
   dispatch: React.Dispatch<GameAction>;
 } | undefined>(undefined);
 
-// 游戏提供者
 export function GameProvider({ children }: { children: React.ReactNode }) {
+  console.log(333)
   const [state, dispatch] = useReducer(gameReducer, initialState);
 
-  // 设置一个定时器，每秒更新一次作物和动物的生长状态
-  // useEffect(() => {
-  //   const timer = setInterval(() => {
-  //     dispatch({ type: 'UPDATE_CROPS' });
-  //     dispatch({ type: 'UPDATE_ANIMALS' });
-  //   }, 1000);
-  //   return () => clearInterval(timer);
-  // }, []);
-
-  // 将状态和dispatch暴露给子组件
   return (
     <GameContext.Provider value={{ state, dispatch }}>
       {children}
@@ -45,7 +34,6 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-// 自定义钩子，用于在组件中使用游戏状态和dispatch
 export function useGameState() {
   const context = useContext(GameContext);
   if (context === undefined) {

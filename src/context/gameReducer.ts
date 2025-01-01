@@ -6,8 +6,8 @@ import { GameState, GameAction } from '../types/game';
 
 // 添加GameState与GameAction之间的映射关系
 export function gameReducer(state: GameState, action: GameAction): GameState {
+  console.log("gameReducer")
   switch (action.type) {
-
     // case 'UPDATE_ANIMALS': {
     //   const now = Date.now();
     //   return {
@@ -79,6 +79,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
     // 购买植物
     case 'BUY_PLANT': {
       console.log('BUY_PLANT reducer called', action.plantType);
+
       const plant = PLANTS[action.plantType];
       if (!plant || state.money < plant.purchasePrice){
         return state;
@@ -113,6 +114,33 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       };
     }
 
+    // 种植植物
+    case 'PLANT_PLANT': {
+      const position = action.position
+
+      if(state.selectedPlant){
+        // 已经种植下的植物+1
+        const newPlantedCrop: PlantedCrop = {
+          id: Math.random().toString(36),
+          type: state.selectedPlant,
+          plantedAt:Date.now(),
+          position,
+          growthTime: PLANTS[state.selectedPlant].growthTime,
+          isReady:false
+        }
+        const newPlantedCrops = [...state.plantedCrops,newPlantedCrop]
+        // 植物种子-1
+        const newPlants = new Map([...state.plants])
+        newPlants.get(state.selectedPlant)?.splice(0,1)
+        return{
+          ...state,
+          plantedCrops: newPlantedCrops,
+          plants: newPlants
+        }
+  
+      }
+     
+    }
     default:
       return state;
   }

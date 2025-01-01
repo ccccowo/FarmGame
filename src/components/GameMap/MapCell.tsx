@@ -6,7 +6,7 @@ import { Sprout, Check } from 'lucide-react';
 
 interface MapCellProps {
   index: number;
-  plantedCrop?: PlantedCrop;
+  plantedCrop?: PlantedCrop | null;
 }
 
 export const MapCell: React.FC<MapCellProps> = ({ index, plantedCrop }) => {
