@@ -24,7 +24,8 @@ function AppContent() {
             <GameMap />
           </div>
           <div className="lg:col-span-3 space-y-6">
-            {/* <AnimalManagement /> */}
+            {/* 动物管理工具 */}
+            <AnimalManagement />
             {/* 种植工具 */}
             <PlantingTools />
             {/* 商店 面板*/}
@@ -32,9 +33,9 @@ function AppContent() {
           </div>
         </div>
       </div>
-      {/* {state.selectedShop === 'BUY_SEEDS' && <SeedShop />}  
+      {state.selectedShop === 'BUY_SEEDS' && <SeedShop />}  
       {state.selectedShop === 'BUY_EQUIPMENT' && <EquipmentShop />}
-      {state.selectedShop === 'BUY_ANIMAL' && <AnimalShop />} */}
+      {state.selectedShop === 'BUY_ANIMAL' && <AnimalShop />}
     </div>
   );
 }

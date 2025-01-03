@@ -9,13 +9,15 @@ const initialState: GameState = {
   selectedAnimal: null,
   // 种下的作物
   plantedCrops: [],
-  // 拥有的动物
-  ownedAnimals: [],
-  // 作物（未种下的）
-  plants: new Map(),
-  // 拥有的动物
-  animals: [],
-  lastPurchaseTime: {},
+  // 放牧的动物
+  grazingAnimals: [],
+  // 仓库
+  warehouse: {
+    seeds: {},
+    ownedAnimals: {},
+    plants: {},
+    animalProducts: {},
+  },
 };
 
 const GameContext = createContext<{
@@ -24,8 +26,15 @@ const GameContext = createContext<{
 } | undefined>(undefined);
 
 export function GameProvider({ children }: { children: React.ReactNode }) {
-  console.log(333)
   const [state, dispatch] = useReducer(gameReducer, initialState);
+
+  // 每秒更新作物的生长状态
+  useEffect(() => {
+    const interval = setInterval(() => {
+      dispatch({ type: 'UPDATE_PLANT_GROWTH_TIME' });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <GameContext.Provider value={{ state, dispatch }}>

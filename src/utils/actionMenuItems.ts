@@ -10,6 +10,6 @@ type MenuItem = {
 export const getActionMenuItems = (): MenuItem[] => [
   { icon: Store, label: '购买动物', action: 'BUY_ANIMAL' },
   { icon: Wheat, label: '购买种子', action: 'BUY_SEEDS' },
-  { icon: Leaf, label: '种植管理', action: 'MANAGE_CROPS' },
+  { icon: Leaf, label: '仓库', action: 'MANAGE_WAREHOUSE' },
   { icon: Tractor, label: '购买设备', action: 'BUY_EQUIPMENT' },
 ];

@@ -3,16 +3,22 @@ import { useGameState } from '../../context/GameContext';
 import { PlantedCrop } from '../../types/plants';
 import { PLANTS } from '../../utils/plants';
 import { Sprout, Check } from 'lucide-react';
+import { GrazingAnimal } from '../../types/animals';
+import { ANIMALS } from '../../utils/animals';
 
 interface MapCellProps {
   index: number;
   plantedCrop?: PlantedCrop | null;
+  grazingAnimal?: GrazingAnimal | null;
 }
 
-export const MapCell: React.FC<MapCellProps> = ({ index, plantedCrop }) => {
+
+export const MapCell: React.FC<MapCellProps> = ({ index, plantedCrop, grazingAnimal }) => {
   const { state, dispatch } = useGameState();
   // 当没有种下作物时，并且有种植选择时，可以种植
-  const canPlant = !plantedCrop && state.selectedPlant !== null
+  const canPlant = !plantedCrop && state.selectedPlant && state.warehouse.seeds[state.selectedPlant] > 0
+  // 当没有放牧动物时，并且有动物选择时，可以养殖
+  const canAnimal = !grazingAnimal && state.selectedAnimal && state.warehouse.ownedAnimals[state.selectedAnimal] > 0
 
   const handleCellClick = () => {
     // 当种下作物时，并且成熟时，可以收获
@@ -27,6 +33,20 @@ export const MapCell: React.FC<MapCellProps> = ({ index, plantedCrop }) => {
     if (canPlant) {
       dispatch({ type: 'PLANT_PLANT', position: index });
     }
+
+    // 当正在放牧动物时，并且动物产物成熟时，可以收获
+    if (grazingAnimal) {
+      if (grazingAnimal.product && grazingAnimal.product.isMature) {
+        dispatch({ type: 'COLLECT_ANIMAL_PRODUCTS', id: grazingAnimal.id });
+      }
+      return;
+    }
+
+    // 当没有放牧动物时，并且有动物选择时，可以养殖
+    if (canAnimal) {
+
+      dispatch({ type: 'GRAZE_ANIMAL', position: index });
+    }
   };
 
   // 获取作物的生长进度
@@ -38,37 +58,83 @@ export const MapCell: React.FC<MapCellProps> = ({ index, plantedCrop }) => {
     return Math.min((current / total) * 100, 100);
   };
 
+  // 获取动物的成熟进度
+  const getAnimalProgressPercentage = () => {
+    if (!grazingAnimal) return 0;
+    const now = Date.now();
+    const total = grazingAnimal.maturityTime;
+    const current = now - grazingAnimal.grazedAt;
+    return Math.min((current / total) * 100, 100);
+  };
+
+  // 获取动物产物的生成进度
+  const getAnimalProductProgressPercentage = () => {
+    if (!grazingAnimal || !grazingAnimal.product) return 0;
+    const now = Date.now();
+    const total = grazingAnimal.product.maturityTime;
+    const current = now - grazingAnimal.product.producedAt;
+    return Math.min((current / total) * 100, 100);
+  };
+
 
   const getTooltipContent = () => {
     const now = Date.now();
-    if (!plantedCrop) {
+    // 空地
+    if (!plantedCrop && !grazingAnimal) {
       if (canPlant && state.selectedPlant) {
         return `点击种植 ${PLANTS[state.selectedPlant].name}`;
+      }
+      else if (canAnimal && state.selectedAnimal) {
+        return `点击放牧 ${ANIMALS[state.selectedAnimal].name}`;
       }
       return '空地';
     }
 
-    const plant = PLANTS[plantedCrop.type];
-    if (plantedCrop.isReady) {
-      return `${plant.name} (已成熟，点击收获)`;
+    // 种下作物时
+    if(plantedCrop){
+      const plant =  PLANTS[plantedCrop.type];
+      // 作物成熟
+      if (plantedCrop.isReady) {
+        return `${plant.name} (已成熟，点击收获)`;
+      }
+      // 作物未成熟
+      // 计算成熟还需要多少时间（总时间-（now - 种下时间））
+      const timeRemaining = Math.max(0, Math.ceil((plantedCrop.growthTime - (now - plantedCrop.plantedAt)) / 1000));
+      return `${plant.name} (还需 ${timeRemaining} 秒)`;
     }
 
-    // 计算成熟还需要多少时间（总时间-（now - 种下时间））
-    const timeRemaining = Math.max(0, Math.ceil((plantedCrop.growthTime - (now - plantedCrop.plantedAt)) / 1000));
-    if(timeRemaining == 0){
-      return `${plant.name} 已经成熟`;
+    // 放牧动物时
+    if(grazingAnimal){
+      const animal = ANIMALS[grazingAnimal.type];
+      // 动物未成熟
+      if(!grazingAnimal.isMature){
+        return `${animal.name} (还需 ${Math.ceil((grazingAnimal.maturityTime - (now - grazingAnimal.grazedAt)) / 1000)} 秒)成熟`;
+      }
+      // 动物成熟，动物产物未成熟
+      else if (grazingAnimal.product && !grazingAnimal.product.isMature) {
+        return `${animal.name} (动物产物还需 ${Math.ceil((grazingAnimal.product.maturityTime - (now - grazingAnimal.product.producedAt)) / 1000)} 秒)生成`;
+      }
+      // 动物成熟，动物产物成熟 
+      else if (grazingAnimal.product && grazingAnimal.product.isMature) {
+        return `${animal.name} (动物产物已生成，点击收获)`;
+      }
     }
-    return `${plant.name} (还需 ${timeRemaining} 秒)`;
-  };
-
+  }
   const getCellStyle = () => {
     if (plantedCrop) {
       return 'bg-green-100 hover:bg-green-200';
     }
-    if (canPlant) {
+    else if (canPlant) {
       return 'bg-emerald-50 hover:bg-emerald-100 ring-2 ring-emerald-300';
     }
-    return 'bg-stone-100 hover:bg-stone-200';
+    else if (grazingAnimal) {
+      return 'bg-green-100 hover:bg-green-200';
+    }
+    else if (canAnimal) {
+      return 'bg-amber-50 hover:bg-amber-100 ring-2 ring-amber-300';
+    }
+    else
+      return 'bg-stone-100 hover:bg-stone-200';
   };
 
   return (
@@ -95,6 +161,23 @@ export const MapCell: React.FC<MapCellProps> = ({ index, plantedCrop }) => {
               <div
                 className="h-full bg-green-500 rounded-full transition-all duration-1000 ease-linear"
                 style={{ width: `${getProgressPercentage()}%` }}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Animal Content */}
+        {grazingAnimal && (
+          <div className="relative w-full h-full flex items-center justify-center">
+            {grazingAnimal.isMature ? (
+              <Check className="w-6 h-6 text-green-600" />
+            ) : (
+              <Sprout className="w-6 h-6 text-green-600" />
+            )}
+            <div className="absolute bottom-1 left-1 right-1 h-1 bg-gray-200/80 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-green-500 rounded-full transition-all duration-1000 ease-linear"
+                style={{ width: `${getAnimalProgressPercentage()}%` }}
               />
             </div>
           </div>

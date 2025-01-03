@@ -4,25 +4,25 @@ import { Animal } from '../../types/animals';
 import { Heart, Smile } from 'lucide-react';
 
 interface AnimalStatusCardProps {
-  animal: OwnedAnimal;
-  animalInfo: Animal;
+  type: AnimalType;
+  number: number
 }
 
-export const AnimalStatusCard: React.FC<AnimalStatusCardProps> = ({ animal, animalInfo }) => {
-  const getMaturityStatus = () => {
-    if (animal.isMature) {
-      return <span className="text-green-600 text-sm">已成熟</span>;
-    }
-    const now = Date.now();
-    const remainingTime = Math.max(0, animal.maturesAt - now);
-    const minutes = Math.floor(remainingTime / (1000 * 60));
-    const seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
-    return (
-      <span className="text-amber-600 text-sm">
-        还需 {minutes}分{seconds}秒
-      </span>
-    );
-  };
+export const AnimalStatusCard: React.FC<AnimalStatusCardProps> = ({ type,number }) => {
+  // const getMaturityStatus = () => {
+  //   if (animal.isMature) {
+  //     return <span className="text-green-600 text-sm">已成熟</span>;
+  //   }
+  //   const now = Date.now();
+  //   const remainingTime = Math.max(0, animal.maturesAt - now);
+  //   const minutes = Math.floor(remainingTime / (1000 * 60));
+  //   const seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
+  //   return (
+  //     <span className="text-amber-600 text-sm">
+  //       还需 {minutes}分{seconds}秒
+  //     </span>
+  //   );
+  // };
 
   return (
     <div className="border rounded-lg p-3 hover:shadow-md transition-shadow">

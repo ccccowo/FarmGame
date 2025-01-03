@@ -1,16 +1,12 @@
-
 import { useGameState } from '../../context/GameContext';
 import { ActionButton } from '../ui/ActionButton';
 import { getActionMenuItems } from '../../utils/actionMenuItems';
-
 import React, { useCallback } from 'react';
 
 const ActionPanel = () => {
   const { state, dispatch } = useGameState();
   const menuItems = getActionMenuItems();
-
-  // 使用 useCallback 钩子记忆 handleAction 函数
-  const handleAction = useCallback((action: string) => {
+  const handleAction = useCallback((action: string | null) => {
     // 如果点击当前已选中的动作，则关闭弹窗
     if (state.selectedShop === action) {
       dispatch({ type: 'SELECT_SHOP', shop: null });

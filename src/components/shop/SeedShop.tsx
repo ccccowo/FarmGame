@@ -6,20 +6,13 @@ import { X } from 'lucide-react';
 
 const SeedShop = () => {
   const { state, dispatch } = useGameState();
-  const lastPurchaseTime = React.useRef<number | null>(null);
 
   const handleBuySeeds = React.useCallback((plantType: PlantType, purchasePrice: number) => {
-    console.log('handleBuySeeds called', plantType, purchasePrice);
     if (state.money >= purchasePrice) {
-      const currentTime = Date.now();
-      if (!lastPurchaseTime.current || currentTime - lastPurchaseTime.current > 500) {
-        lastPurchaseTime.current = currentTime;
-        console.log('dispatching BUY_PLANT');
         dispatch({ 
           type: 'BUY_PLANT', 
           plantType
         });
-      }
     }
   }, [state.money, dispatch]);
 
