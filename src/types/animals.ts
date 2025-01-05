@@ -34,7 +34,7 @@ export type AnimalProductType =
   | 'wool' 
   | 'eggs' 
   | 'feathers'
-  | 'fur'
+  // | 'fur'
 
 export type AnimalType = 
   | 'pig' 
@@ -42,7 +42,7 @@ export type AnimalType =
   | 'sheep' 
   | 'chicken'
   | 'duck' 
-  | 'dog';
+  // | 'dog';
 
 // 养殖的动物
 export interface GrazingAnimal {

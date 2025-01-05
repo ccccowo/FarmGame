@@ -7,6 +7,7 @@ const initialState: GameState = {
   selectedShop: null,
   selectedPlant: null,
   selectedAnimal: null,
+  selectedEquipment: null,
   // 种下的作物
   plantedCrops: [],
   // 放牧的动物
@@ -17,6 +18,7 @@ const initialState: GameState = {
     ownedAnimals: {},
     plants: {},
     animalProducts: {},
+    equipments:{}
   },
 };
 
@@ -32,6 +34,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const interval = setInterval(() => {
       dispatch({ type: 'UPDATE_PLANT_GROWTH_TIME' });
+      dispatch({ type: 'UPDATE_ANIMAL_MATURE_TIME' });
     }, 1000);
     return () => clearInterval(interval);
   }, []);

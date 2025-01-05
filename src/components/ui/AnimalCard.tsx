@@ -20,19 +20,6 @@ export const AnimalCard: React.FC<AnimalCardProps> = ({ animal, onBuy, canAfford
             <span>成熟时间:</span>
             <span>{formatTimeRemaining(animal.maturityTime)}</span>
           </div>
-          <div className="flex justify-between text-sm">
-            <span>每日收益:</span>
-            <span className="text-green-600">¥{animal.income}</span>
-          </div>
-          {animal.abilities && (
-            <div className="flex flex-wrap gap-1 mt-2">
-              {animal.abilities.map(ability => (
-                <span key={ability} className="px-2 py-1 bg-blue-50 text-blue-600 text-xs rounded-full">
-                  {ability === 'protect' ? '保护' : '旅游'}
-                </span>
-              ))}
-            </div>
-          )}
         </div>
 
         <button

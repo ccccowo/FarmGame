@@ -18,8 +18,7 @@ const ActionPanel = () => {
 
   return (
     <div className="bg-white rounded-lg shadow-lg p-4">
-      <h2 className="text-lg font-semibold mb-4">操作面板</h2>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-4 gap-3">
         {menuItems.map((item) => (
           <ActionButton
             key={item.action}

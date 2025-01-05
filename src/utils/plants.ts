@@ -73,13 +73,13 @@ export const PLANTS: Record<string, Plant> = {
     purchasePrice: 10,
     description: '玫瑰花是基本的玫瑰花作物，可以用来制作玫瑰花茶和玫瑰花酒。',
   },
-  lily: {
-    id: 'lily',
-    type: 'lily',
-    name: '百合花',
-    growthTime: 60000,  // 60秒
-    price: 180,
-    purchasePrice: 10,
-    description: '百合花是基本的百合花作物，可以用来制作百合花茶和百合花酒。',
-  }
+  // lily: {
+  //   id: 'lily',
+  //   type: 'lily',
+  //   name: '百合花',
+  //   growthTime: 60000,  // 60秒
+  //   price: 180,
+  //   purchasePrice: 10,
+  //   description: '百合花是基本的百合花作物，可以用来制作百合花茶和百合花酒。',
+  // }
 };

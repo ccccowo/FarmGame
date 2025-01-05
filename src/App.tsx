@@ -1,16 +1,17 @@
-import React from 'react';
-import GameHeader from './components/GameHeader';
-import GameMap from './components/GameMap/index';
+import React from "react";
+import GameHeader from "./components/GameHeader";
+import GameMap from "./components/GameMap/index";
 // 商店
-import ShopPanel from './components/shop/ShopPanel';
-import SeedShop from './components/shop/SeedShop';
-import EquipmentShop from './components/shop/EquipmentShop';
-import AnimalShop from './components/shop/AnimalShop';
+import ShopPanel from "./components/shop/ShopPanel";
+import SeedShop from "./components/shop/SeedShop";
+import EquipmentShop from "./components/shop/EquipmentShop";
+import AnimalShop from "./components/shop/AnimalShop";
 // 动物管理
-import AnimalManagement from './components/AnimalManagement';
+import AnimalManagement from "./components/tab/AnimalManagement";
 // 种植工具
-import PlantingTools from './components/PlantingTools';
-import { useGameState } from './context/GameContext';
+import { FarmTab } from "./components/tab/FarmTab";
+import EquipmentTool from "./components/tab/EquipmentTool";
+import { useGameState } from "./context/GameContext";
 function AppContent() {
   const { state } = useGameState();
 
@@ -22,28 +23,24 @@ function AppContent() {
           {/* 游戏地图   */}
           <div className="lg:col-span-9">
             <GameMap />
-          </div>
-          <div className="lg:col-span-3 space-y-6">
-            {/* 动物管理工具 */}
-            <AnimalManagement />
-            {/* 种植工具 */}
-            <PlantingTools />
+            <br />
             {/* 商店 面板*/}
             <ShopPanel />
           </div>
+          <div className="lg:col-span-3 space-y-6">
+            <FarmTab />
+          </div>
         </div>
       </div>
-      {state.selectedShop === 'BUY_SEEDS' && <SeedShop />}  
-      {state.selectedShop === 'BUY_EQUIPMENT' && <EquipmentShop />}
-      {state.selectedShop === 'BUY_ANIMAL' && <AnimalShop />}
+      {state.selectedShop === "BUY_SEEDS" && <SeedShop />}
+      {state.selectedShop === "BUY_EQUIPMENT" && <EquipmentShop />}
+      {state.selectedShop === "BUY_ANIMAL" && <AnimalShop />}
     </div>
   );
 }
 
 function App() {
-  return (
-      <AppContent></AppContent>
-  );
+  return <AppContent></AppContent>;
 }
 
 export default App;

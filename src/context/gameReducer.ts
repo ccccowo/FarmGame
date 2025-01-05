@@ -1,8 +1,10 @@
 import { ANIMALS, ANIMAL_PRODUCTS } from '../utils/animals';
 import { PLANTS } from '../utils/plants';  
+import { EQUIPMENT } from '../utils/equipment';
 import { PlantedCrop } from '../types/plants';
 import { GrazingAnimal, AnimalProduct, AnimalProductType } from '../types/animals';
 import { GameState, GameAction } from '../types/game';
+import { message } from 'antd';
 
 // 添加GameState与GameAction之间的映射关系
 export function gameReducer(state: GameState, action: GameAction): GameState {
@@ -61,6 +63,8 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       // 创建新的seeds对象
       const newSeeds = {...state.warehouse.seeds};
       newSeeds[action.plantType] = (newSeeds[action.plantType] || 0) + 1;
+
+      // message.success('购买成功')
       
       return {
         ...state,
@@ -223,6 +227,28 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         warehouse: {
           ...state.warehouse,
           animalProducts: newAnimalProducts
+        }
+      }
+    }
+    // 购买道具
+    case 'BUY_EQUIPMENT': {
+      const equipment = EQUIPMENT[action.equipmentType]
+      if(!equipment || state.money < equipment.purchasePrice){
+        // antd组件的message消息提示
+        message.error('购买失败，金币不足')
+        return state
+      }
+      else{
+        // 仓库中对应数量的道具++
+        const newEquipments = {...state.warehouse.equipments}
+        newEquipments[equipment.type] ? newEquipments[equipment.type]++ : newEquipments[equipment.type] = 1
+        return {
+          ...state,
+          money:state.money - equipment.purchasePrice,
+          warehouse: {
+            ...state.warehouse,
+            equipments: newEquipments
+          }
         }
       }
     }

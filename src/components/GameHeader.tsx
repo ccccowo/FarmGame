@@ -6,7 +6,7 @@ const GameHeader = () => {
   const { state } = useGameState();
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-4">
+    <div className="bg-white rounded-lg shadow-lg p-2">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
           <Sprout className="h-8 w-8 text-green-600" />

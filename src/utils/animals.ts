@@ -51,15 +51,15 @@ export const ANIMALS: Record<AnimalType, Animal> = {
     maturityTime: 4 * 60 * 1000,
     product:'eggs',
   },
-  dog: {
-    id: 'dog',
-    type: 'dog',
-    name: '牧羊犬',
-    price: 2000,
-    purchasePrice: 100,
-    description: '保护牧场安全，预防狼群袭击',
-    maturityTime: 5 * 60 * 1000,
-  },
+  // dog: {
+  //   id: 'dog',
+  //   type: 'dog',
+  //   name: '牧羊犬',
+  //   price: 2000,
+  //   purchasePrice: 100,
+  //   description: '保护牧场安全，预防狼群袭击',
+  //   maturityTime: 5 * 60 * 1000,
+  // },
 };
 
 export const ANIMAL_PRODUCTS: Record<AnimalProductType, any> = {
@@ -93,10 +93,10 @@ export const ANIMAL_PRODUCTS: Record<AnimalProductType, any> = {
     price: 10,
     description: '用来制作羽毛服装和羽毛帽子',
   },
-  fur: {
-    id: 'fur',
-    name: '毛皮',
-    price: 15,
-    description: '用来制作毛皮服装和毛皮帽子',
-  }
+  // fur: {
+  //   id: 'fur',
+  //   name: '毛皮',
+  //   price: 15,
+  //   description: '用来制作毛皮服装和毛皮帽子',
+  // }
 };

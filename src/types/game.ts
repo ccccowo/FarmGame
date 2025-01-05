@@ -10,6 +10,7 @@ export interface GameState {
   selectedPlant: PlantType | null;
   // 动物选择
   selectedAnimal: AnimalType | null;
+  selectedEquipment : EquipmentType | null;
   // 种植的作物
   plantedCrops: PlantedCrop[];
   // 正在放牧的动物
@@ -32,6 +33,9 @@ export interface GameState {
     animalProducts: {
       [key: string]: number;
     };
+    equipments:{
+      [key: string]: number
+    }
   };
 }
 
@@ -55,6 +59,7 @@ export type GameAction =
   | { type:'SELL_GRAZED_ANIMAL',id:string}
   | { type: 'SELL_ANIMAL_PRODUCT'}
   // 设备相关
-  | { type: 'BUY_EQUIPMENT'; equipment: EquipmentType}
-  | { type: 'SELECT_EQUIPMENT'; equipment: EquipmentType | null }
+  | { type: 'BUY_EQUIPMENT'; equipmentType: EquipmentType}
+  | { type: 'SELECT_EQUIPMENT'; equipmentType: EquipmentType | null }
+  | { type: 'USE_EQUIPMENT'}
 

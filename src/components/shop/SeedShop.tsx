@@ -3,6 +3,7 @@ import { useGameState } from '../../context/GameContext';
 import { PLANTS } from '../../utils/plants';
 import { PlantType } from '../../types/plants';
 import { X } from 'lucide-react';
+import { formatTimeRemaining } from '../../utils/timeUtils';
 
 const SeedShop = () => {
   const { state, dispatch } = useGameState();
@@ -35,7 +36,7 @@ const SeedShop = () => {
             <div key={key} className="border rounded-lg p-4 flex justify-between items-center">
               <div>
                 <h3 className="font-semibold">{plant.name}</h3>
-                <p className="text-sm text-gray-600">生长期: {plant.growthTime}天</p>
+                <p className="text-sm text-gray-600">生长期: {formatTimeRemaining(plant.growthTime)}</p>
                 <p className="text-sm text-gray-600">售价: ¥{plant.purchasePrice}</p>
               </div>
               <button

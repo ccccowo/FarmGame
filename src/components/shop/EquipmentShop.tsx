@@ -2,6 +2,7 @@ import React from 'react';
 import { useGameState } from '../../context/GameContext';
 import { EQUIPMENT } from '../../utils/equipment';
 import { X, Tractor, Sprout, Pill } from 'lucide-react';
+import { EquipmentType } from '../../types/equipment';
 
 const getIconForType = (type: string) => {
   switch (type) {
@@ -10,8 +11,6 @@ const getIconForType = (type: string) => {
     case 'feed':
     case 'fertilizer':
       return Sprout;
-    case 'medicine':
-      return Pill;
     default:
       return Tractor;
   }
@@ -20,18 +19,18 @@ const getIconForType = (type: string) => {
 const EquipmentShop = () => {
   const { state, dispatch } = useGameState();
 
-  const handleBuyEquipment = (itemId: string, price: number) => {
-    if (state.money >= price) {
+  const handleBuyEquipment = ( equipmentType: EquipmentType) => {
+    const equipment = EQUIPMENT[equipmentType]
+    if (state.money >= equipment.purchasePrice) {
       dispatch({
         type: 'BUY_EQUIPMENT',
-        item: itemId as keyof typeof state.equipment,
-        quantity: 1
+        equipmentType
       });
     }
   };
 
   const closeShop = () => {
-    dispatch({ type: 'SELECT_ACTION', action: null });
+    dispatch({ type: 'SELECT_SHOP', shop: null });
   };
 
   return (
@@ -61,14 +60,14 @@ const EquipmentShop = () => {
                         效率提升: {(item.efficiency * 100 - 100).toFixed(0)}%
                       </span>
                       <span className="text-sm font-medium text-green-600">
-                        ¥{item.price.toLocaleString()}
+                        ¥{item.purchasePrice}
                       </span>
                     </div>
                     <button
-                      onClick={() => handleBuyEquipment(key, item.price)}
-                      disabled={state.money < item.price}
+                      onClick={() => handleBuyEquipment(key as EquipmentType)}
+                      disabled={state.money < item.purchasePrice}
                       className={`mt-3 w-full px-4 py-2 rounded text-sm font-medium ${
-                        state.money >= item.price
+                        state.money >= item.purchasePrice
                           ? 'bg-green-500 hover:bg-green-600 text-white'
                           : 'bg-gray-300 cursor-not-allowed text-gray-500'
                       }`}
