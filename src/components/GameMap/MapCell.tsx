@@ -2,9 +2,11 @@ import React from "react";
 import { useGameState } from "../../context/GameContext";
 import { PlantedCrop } from "../../types/plants";
 import { PLANTS } from "../../utils/plants";
-import { Sprout, Check, Cat,PiggyBank,PawPrint } from "lucide-react";
+import { Sprout, Check, PiggyBank, PawPrint } from "lucide-react";
 import { GrazingAnimal } from "../../types/animals";
 import { ANIMALS } from "../../utils/animals";
+
+import { EQUIPMENT } from "../../utils/equipment";
 
 interface MapCellProps {
   index: number;
@@ -28,8 +30,38 @@ export const MapCell: React.FC<MapCellProps> = ({
     !grazingAnimal &&
     state.selectedAnimal &&
     state.warehouse.ownedAnimals[state.selectedAnimal] > 0;
+  // 当选择了道具并且道具不为0时，可以使用道具
+  const canUse =
+    state.selectedEquipment &&
+    state.warehouse.equipments[state.selectedEquipment] > 0;
 
   const handleCellClick = () => {
+    // 当可以使用道具时
+    if (canUse) {
+      console.log("can use~")
+      console.log(plantedCrop,grazingAnimal)
+      if (plantedCrop) {
+        console.log("plant~")
+        // 对植物使用道具
+        if (EQUIPMENT[state.selectedEquipment].target === "plant") {
+          dispatch({
+            type: "USE_EQUIPMENT_TO_PLANT",
+            equipmentType: state.selectedEquipment,
+            id: plantedCrop.id,
+          });
+        }
+      } else if (grazingAnimal) {
+        console.log("animal~")
+        // 对动物使用道具
+        if (EQUIPMENT[state.selectedEquipment].target === "animal") {
+          dispatch({
+            type: "USE_EQUIPMENT_TO_ANIMAL",
+            equipmentType: state.selectedEquipment,
+            id: grazingAnimal.id,
+          });
+        }
+      }
+    }
     // 当种下作物时，并且成熟时，可以收获
     if (plantedCrop) {
       if (plantedCrop.isReady) {
@@ -55,6 +87,8 @@ export const MapCell: React.FC<MapCellProps> = ({
     if (canAnimal) {
       dispatch({ type: "GRAZE_ANIMAL", position: index });
     }
+
+    
   };
 
   // 获取作物的生长进度
@@ -147,7 +181,7 @@ export const MapCell: React.FC<MapCellProps> = ({
       return "bg-amber-50 hover:bg-amber-100";
     } else if (canAnimal) {
       return "bg-amber-50 hover:bg-amber-100 ring-2 ring-amber-300";
-    } 
+    }
     // 返回白色背景
     else return "bg-white hover:bg-gray-100";
   };
@@ -190,21 +224,17 @@ export const MapCell: React.FC<MapCellProps> = ({
               // 当动物产品准备收获时
               grazingAnimal.product?.isMature ? (
                 <Check className="w-6 h-6 text-green-600" />
-              ) : (
-                // 当动物成熟但产品未准备好时
-                grazingAnimal.type === 'pig' ? (
-                  <PiggyBank className="w-6 h-6 text-amber-600" />
-                ) : (
-                  <PawPrint className="w-6 h-6 text-amber-600" />
-                )
-              )
-            ) : (
-              // 动物未成熟时
-              grazingAnimal.type === 'pig' ? (
+              ) : // 当动物成熟但产品未准备好时
+              grazingAnimal.type === "pig" ? (
                 <PiggyBank className="w-6 h-6 text-amber-600" />
               ) : (
                 <PawPrint className="w-6 h-6 text-amber-600" />
               )
+            ) : // 动物未成熟时
+            grazingAnimal.type === "pig" ? (
+              <PiggyBank className="w-6 h-6 text-amber-600" />
+            ) : (
+              <PawPrint className="w-6 h-6 text-amber-600" />
             )}
             {/* ... progress bar ... */}
             <div className="absolute bottom-1 left-1 right-1 h-1 bg-gray-200/80 rounded-full overflow-hidden">

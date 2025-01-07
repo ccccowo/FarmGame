@@ -8,7 +8,9 @@ export type Equipment = {
   price: number;
   description: string;
   // 加快植物/动物成长速度多少倍
-  efficiency?: number
+  efficiency?: number;
+  // 作用对象
+  target?:string
 };
 
 export type EquipmentType = 'machine' | 'feed' | 'fertilizer'

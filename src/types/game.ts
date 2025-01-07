@@ -61,5 +61,6 @@ export type GameAction =
   // 设备相关
   | { type: 'BUY_EQUIPMENT'; equipmentType: EquipmentType}
   | { type: 'SELECT_EQUIPMENT'; equipmentType: EquipmentType | null }
-  | { type: 'USE_EQUIPMENT'}
+  | { type: 'USE_EQUIPMENT_TO_PLANT';equipmentType: EquipmentType,id:string}
+  | { type: 'USE_EQUIPMENT_TO_ANIMAL';equipmentType: EquipmentType,id:string}
 
