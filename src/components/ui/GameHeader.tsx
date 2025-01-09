@@ -1,5 +1,5 @@
 import React from 'react';
-import { useGameState } from '../context/GameContext';
+import { useGameState } from '../../context/GameContext';
 import { Sprout } from 'lucide-react';
 
 const GameHeader = () => {

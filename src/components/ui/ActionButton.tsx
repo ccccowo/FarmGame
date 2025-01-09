@@ -4,7 +4,7 @@ import { LucideIcon } from 'lucide-react';
 interface ActionButtonProps {
   icon: LucideIcon;
   label: string;
-  onClick: (event?:any) => void;
+  onClick: () => void;
   isActive?: boolean;
 }
 

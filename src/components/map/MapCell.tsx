@@ -1,11 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { useGameState } from "../../context/GameContext";
 import { PlantedCrop } from "../../types/plants";
 import { PLANTS } from "../../utils/plants";
-import { Sprout, Check, PiggyBank, PawPrint } from "lucide-react";
+import { Sprout, Check, PiggyBank, PawPrint, X } from "lucide-react";
 import { GrazingAnimal } from "../../types/animals";
 import { ANIMALS } from "../../utils/animals";
-
+import { message, Modal } from "antd";
 import { EQUIPMENT } from "../../utils/equipment";
 
 interface MapCellProps {
@@ -20,6 +20,8 @@ export const MapCell: React.FC<MapCellProps> = ({
   grazingAnimal,
 }) => {
   const { state, dispatch } = useGameState();
+  const [showRemoveConfirm, setShowRemoveConfirm] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   // 当没有种下作物时，并且有种植选择时，可以种植
   const canPlant =
     !plantedCrop &&
@@ -38,10 +40,7 @@ export const MapCell: React.FC<MapCellProps> = ({
   const handleCellClick = () => {
     // 当可以使用道具时
     if (canUse) {
-      console.log("can use~")
-      console.log(plantedCrop,grazingAnimal)
       if (plantedCrop) {
-        console.log("plant~")
         // 对植物使用道具
         if (EQUIPMENT[state.selectedEquipment].target === "plant") {
           dispatch({
@@ -51,7 +50,6 @@ export const MapCell: React.FC<MapCellProps> = ({
           });
         }
       } else if (grazingAnimal) {
-        console.log("animal~")
         // 对动物使用道具
         if (EQUIPMENT[state.selectedEquipment].target === "animal") {
           dispatch({
@@ -77,8 +75,14 @@ export const MapCell: React.FC<MapCellProps> = ({
 
     // 当正在放牧动物时，并且动物产物成熟时，可以收获
     if (grazingAnimal) {
-      if (grazingAnimal.product && grazingAnimal.product.isMature) {
+      if (!grazingAnimal.product) {
+        message.error("动物产品异常");
+        return;
+      }
+      if (grazingAnimal.product.isMature) {
         dispatch({ type: "COLLECT_ANIMAL_PRODUCTS", id: grazingAnimal.id });
+      } else {
+        message.info("动物产品还未成熟");
       }
       return;
     }
@@ -89,6 +93,40 @@ export const MapCell: React.FC<MapCellProps> = ({
     }
 
     
+  };
+
+  const handleRemovePlant = async(plantId: string) => {
+    setIsLoading(true);
+    try {
+      const plant = state.plantedCrops.find(crop => crop.id === plantId);
+      if (!plant) return;
+      
+      const removeCost = Math.ceil(PLANTS[plant.type].purchasePrice * 0.1);
+      if (state.money < removeCost) {
+        message.error("金币不足，无法铲除");
+        return;
+      }
+
+      await Modal.confirm({
+        title: "确认铲除",
+        content: (
+          <div>
+            <p>是否确认铲除 {PLANTS[plant.type].name}？</p>
+            <p className="text-red-500">铲除后将失去该植物，且需要支付 ¥{removeCost} 的铲除费用</p>
+          </div>
+        ),
+        okText: "确认",
+        cancelText: "取消",
+        onOk: () => {
+          dispatch({ type: "REMOVE_PLANT", id: plantId });
+          message.success("铲除成功");
+        }
+      });
+    } catch (error) {
+      message.error("操作失败，请重试");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // 获取作物的生长进度
@@ -202,12 +240,21 @@ export const MapCell: React.FC<MapCellProps> = ({
         {plantedCrop && (
           <div className="relative w-full h-full flex items-center justify-center">
             {plantedCrop.isReady ? (
-              // 勾勾图标
               <Check className="w-6 h-6 text-green-600" />
             ) : (
-              // 新芽图标
               <Sprout className="w-6 h-6 text-green-600" />
             )}
+            
+            <button
+              onClick={(e) => {
+                e.stopPropagation(); // 阻止事件冒泡
+                handleRemovePlant(plantedCrop.id);
+              }}
+              className="absolute top-1 right-1 p-1 bg-red-100 hover:bg-red-200 rounded-full"
+            >
+              <X className="w-4 h-4 text-red-600" />
+            </button>
+            
             <div className="absolute bottom-1 left-1 right-1 h-1 bg-gray-200/80 rounded-full overflow-hidden">
               <div
                 className="h-full bg-green-500 rounded-full transition-all duration-1000 ease-linear"
@@ -221,26 +268,34 @@ export const MapCell: React.FC<MapCellProps> = ({
         {grazingAnimal && (
           <div className="relative w-full h-full flex items-center justify-center">
             {grazingAnimal.isMature ? (
-              // 当动物产品准备收获时
+              // 动物已成熟
               grazingAnimal.product?.isMature ? (
                 <Check className="w-6 h-6 text-green-600" />
-              ) : // 当动物成熟但产品未准备好时
+              ) : (
+                grazingAnimal.type === "pig" ? (
+                  <PiggyBank className="w-6 h-6 text-amber-600" />
+                ) : (
+                  <PawPrint className="w-6 h-6 text-amber-600" />
+                )
+              )
+            ) : (
+              // 动物未成熟
               grazingAnimal.type === "pig" ? (
                 <PiggyBank className="w-6 h-6 text-amber-600" />
               ) : (
                 <PawPrint className="w-6 h-6 text-amber-600" />
               )
-            ) : // 动物未成熟时
-            grazingAnimal.type === "pig" ? (
-              <PiggyBank className="w-6 h-6 text-amber-600" />
-            ) : (
-              <PawPrint className="w-6 h-6 text-amber-600" />
             )}
-            {/* ... progress bar ... */}
+            
+            {/* 进度条 */}
             <div className="absolute bottom-1 left-1 right-1 h-1 bg-gray-200/80 rounded-full overflow-hidden">
               <div
                 className="h-full bg-amber-500 rounded-full transition-all duration-1000 ease-linear"
-                style={{ width: `${getAnimalProgressPercentage()}%` }}
+                style={{ 
+                  width: `${grazingAnimal.isMature 
+                    ? getAnimalProductProgressPercentage() 
+                    : getAnimalProgressPercentage()}%` 
+                }}
               />
             </div>
           </div>

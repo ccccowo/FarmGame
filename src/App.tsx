@@ -1,16 +1,13 @@
 import React from "react";
-import GameHeader from "./components/GameHeader";
-import GameMap from "./components/GameMap/index";
+import GameHeader from "./components/ui/GameHeader";
+import GameMap from "./components/map/index";
 // 商店
-import ShopPanel from "./components/shop/ShopPanel";
-import SeedShop from "./components/shop/SeedShop";
-import EquipmentShop from "./components/shop/EquipmentShop";
-import AnimalShop from "./components/shop/AnimalShop";
-// 动物管理
-import AnimalManagement from "./components/tab/AnimalManagement";
-// 种植工具
+import ActionPanel from "./components/active/ActivePanel";
+import SeedShop from "./components/active/SeedShop";
+import EquipmentShop from "./components/active/EquipmentShop";
+import AnimalShop from "./components/active/AnimalShop"
+import WareHouse from "./components/active/WareHouse"
 import { FarmTab } from "./components/tab/FarmTab";
-import EquipmentTool from "./components/tab/EquipmentTool";
 import { useGameState } from "./context/GameContext";
 function AppContent() {
   const { state } = useGameState();
@@ -24,17 +21,18 @@ function AppContent() {
           <div className="lg:col-span-9">
             <GameMap />
             <br />
-            {/* 商店 面板*/}
-            <ShopPanel />
+            {/* 操作面板*/}
+            <ActionPanel />
           </div>
           <div className="lg:col-span-3 space-y-6">
             <FarmTab />
           </div>
         </div>
       </div>
-      {state.selectedShop === "BUY_SEEDS" && <SeedShop />}
-      {state.selectedShop === "BUY_EQUIPMENT" && <EquipmentShop />}
-      {state.selectedShop === "BUY_ANIMAL" && <AnimalShop />}
+      {state.selectedAction === "BUY_SEEDS" && <SeedShop />}
+      {state.selectedAction === "BUY_EQUIPMENT" && <EquipmentShop />}
+      {state.selectedAction === "BUY_ANIMAL" && <AnimalShop />}
+      {state.selectedAction === "MANAGE_WAREHOUSE" && <WareHouse />}
     </div>
   );
 }

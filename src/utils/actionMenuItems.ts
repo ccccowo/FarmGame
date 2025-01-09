@@ -1,5 +1,4 @@
 import { Leaf, Store, Wheat, Tractor } from 'lucide-react';
-import type { GameAction } from '../types/game';
 
 type MenuItem = {
   icon: typeof Store | typeof Wheat | typeof Leaf | typeof Tractor;

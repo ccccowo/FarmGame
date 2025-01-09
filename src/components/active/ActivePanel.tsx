@@ -8,13 +8,13 @@ const ActionPanel = () => {
   const menuItems = getActionMenuItems();
   const handleAction = useCallback((action: string | null) => {
     // 如果点击当前已选中的动作，则关闭弹窗
-    if (state.selectedShop === action) {
-      dispatch({ type: 'SELECT_SHOP', shop: null });
+    if (state.selectedAction === action) {
+      dispatch({ type: 'SELECT_ACTION', action: null });
     } else {
       // 否则打开新的弹窗
-      dispatch({ type: 'SELECT_SHOP', shop: action });
+      dispatch({ type: 'SELECT_ACTION', action: action });
     }
-  }, [state.selectedShop]); // 依赖项：只有当 state.selectedShop 改变时，才重新创建 handleAction
+  }, [state.selectedAction]); // 依赖项：只有当 state.selectedAction 改变时，才重新创建 handleAction
 
   return (
     <div className="bg-white rounded-lg shadow-lg p-4">
@@ -24,14 +24,8 @@ const ActionPanel = () => {
             key={item.action}
             icon={item.icon}
             label={item.label}
-            onClick={
-              (event) => {
-                event.stopPropagation()
-                handleAction(item.action)
-              }
-
-            }
-            isActive={state.selectedShop === item.action}
+            onClick={() => handleAction(item.action)}
+            isActive={state.selectedAction === item.action}
           />
         ))}
       </div>

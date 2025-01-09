@@ -16,7 +16,7 @@ const AnimalShop = () => {
   };
 
   const closeShop = () => {
-    dispatch({ type: 'SELECT_SHOP', shop: null });
+    dispatch({ type: 'SELECT_ACTION', action: null });
   };
 
   return (

@@ -2,11 +2,7 @@ import { ANIMALS, ANIMAL_PRODUCTS } from "../utils/animals";
 import { PLANTS } from "../utils/plants";
 import { EQUIPMENT } from "../utils/equipment";
 import { PlantedCrop } from "../types/plants";
-import {
-  GrazingAnimal,
-  AnimalProduct,
-  AnimalProductType,
-} from "../types/animals";
+import { GrazingAnimal, AnimalProductType, AnimalProduct } from "../types/animals";
 import { GameState, GameAction } from "../types/game";
 import { message } from "antd";
 
@@ -15,10 +11,10 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
   console.log("gameReducer");
   switch (action.type) {
     // 选择商店
-    case "SELECT_SHOP":
+    case "SELECT_ACTION":
       return {
         ...state,
-        selectedShop: action.shop,
+        selectedAction: action.action,
       };
     // 选择种植的植物
     case "SELECT_PLANT":
@@ -35,8 +31,6 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
 
     // 购买动物
     case "BUY_ANIMAL": {
-      console.log(action.animalType);
-
       // 获取到被购买的动物
       const animal = ANIMALS[action.animalType];
       if (!animal || state.money < animal.price) {
@@ -47,10 +41,10 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       const newOwnedAnimals = { ...state.warehouse.ownedAnimals };
       newOwnedAnimals[action.animalType] =
         (newOwnedAnimals[action.animalType] || 0) + 1;
-
+      message.success("购买成功")
       return {
         ...state,
-        money: state.money - animal.price,
+        money: Number((state.money - animal.price).toFixed(2)), // 使用 toFixed(2) 确保金额计算的精度
         warehouse: {
           ...state.warehouse,
           ownedAnimals: newOwnedAnimals,
@@ -69,7 +63,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       const newSeeds = { ...state.warehouse.seeds };
       newSeeds[action.plantType] = (newSeeds[action.plantType] || 0) + 1;
 
-      // message.success('购买成功')
+      message.success('购买成功')
 
       return {
         ...state,
@@ -106,6 +100,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         newSeeds[state.selectedPlant] =
           (newSeeds[state.selectedPlant] || 0) - 1;
 
+        message.success('种植成功')
         return {
           ...state,
           warehouse: {
@@ -144,6 +139,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       if (type) {
         newPlants[type] = (newPlants[type] || 0) + 1;
       }
+      message.success('收获成功')
       return {
         ...state,
         plantedCrops: newPlantedCrops,
@@ -165,30 +161,35 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         const animal = ANIMALS[state.selectedAnimal];
         const product = ANIMAL_PRODUCTS[animal.product as AnimalProductType];
 
+        const animalProduct: AnimalProduct = {
+          id: Math.random().toString(36),
+          name: product.name,
+          type: product.type,
+          price: product.price,
+          description: product.description,
+          producedAt: Date.now(),
+          maturityTime: product.maturityTime,
+          isMature: false,
+        };
+
         const newGrazingAnimal: GrazingAnimal = {
           id: Math.random().toString(36),
           type: state.selectedAnimal,
           name: ANIMALS[state.selectedAnimal].name,
+          price: ANIMALS[state.selectedAnimal].price,
+          description: ANIMALS[state.selectedAnimal].description,
           position,
           grazedAt: Date.now(),
           maturityTime: ANIMALS[state.selectedAnimal].maturityTime,
           isMature: false,
-          product: {
-            id: Math.random().toString(36),
-            name: product.name,
-            type: product.type,
-            price: product.price,
-            description: product.description,
-            producedAt: Date.now(),
-            maturityTime: product.maturityTime,
-            isMature: false,
-          },
+          product: animalProduct
         };
 
         // 仓库中的动物数量-1
         const newOwnedAnimals = { ...state.warehouse.ownedAnimals };
         newOwnedAnimals[state.selectedAnimal] =
           (newOwnedAnimals[state.selectedAnimal] || 0) - 1;
+        message.success('养殖成功')
         return {
           ...state,
           grazingAnimals: [...state.grazingAnimals, newGrazingAnimal],
@@ -198,6 +199,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
           },
         };
       }
+      return state;
     }
     // 更新动物or动物产品的状态
     case "UPDATE_ANIMAL_MATURE_TIME": {
@@ -241,6 +243,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         });
         newAnimalProducts[type] = (newAnimalProducts[type] || 0) + 1;
       }
+      message.success('收获成功')
       return {
         ...state,
         grazingAnimals: newGrazingAnimals,
@@ -254,24 +257,24 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
     case "BUY_EQUIPMENT": {
       const equipment = EQUIPMENT[action.equipmentType];
       if (!equipment || state.money < equipment.purchasePrice) {
-        // antd组件的message消息提示
         message.error("购买失败，金币不足");
         return state;
-      } else {
-        // 仓库中对应数量的道具++
-        const newEquipments = { ...state.warehouse.equipments };
-        newEquipments[equipment.type]
-          ? newEquipments[equipment.type]++
-          : (newEquipments[equipment.type] = 1);
-        return {
-          ...state,
-          money: state.money - equipment.purchasePrice,
-          warehouse: {
-            ...state.warehouse,
-            equipments: newEquipments,
-          },
-        };
       }
+      // 仓库中对应数量的道具++
+      const newEquipments = { ...state.warehouse.equipments };
+      if (newEquipments[equipment.type]) {
+        newEquipments[equipment.type]++;
+      } else {
+        newEquipments[equipment.type] = 1;
+      }
+      return {
+        ...state,
+        money: state.money - equipment.purchasePrice,
+        warehouse: {
+          ...state.warehouse,
+          equipments: newEquipments,
+        },
+      };
     }
     // 选择道具
     case "SELECT_EQUIPMENT": {
@@ -309,6 +312,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       const newEquipments = { ...state.warehouse.equipments };
       newEquipments[equipment.type] = (newEquipments[equipment.type] || 0) - 1;
 
+      message.success('使用成功')
       return {
         ...state,
         selectedEquipment: null,
@@ -343,6 +347,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       // 道具数量--
       const newEquipments = { ...state.warehouse.equipments };
       newEquipments[equipment.type] = (newEquipments[equipment.type] || 0) - 1;
+      message.success('使用成功')
       return {
         ...state,
         selectedEquipment: null,
@@ -351,6 +356,78 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
           ...state.warehouse,
           equipments: newEquipments,
         },
+      };
+    }
+    // 出售种子
+    case "SELL_SEED": {
+      const newSeeds = { ...state.warehouse.seeds };
+      newSeeds[action.seedType] = (newSeeds[action.seedType] || 0) - action.count;
+      message.success('出售成功')
+      return {
+        ...state,
+        money: state.money + PLANTS[action.seedType].purchasePrice * action.count,
+        warehouse: {
+          ...state.warehouse,
+          seeds: newSeeds,
+        },
+      };
+    }
+    // 出售成熟作物
+    case "SELL_PLANT": {
+      const newPlants = { ...state.warehouse.plants };
+      newPlants[action.plantType] = (newPlants[action.plantType] || 0) - action.count;
+      message.success('出售成功')
+      return {
+        ...state,
+        money: state.money + PLANTS[action.plantType].price * action.count,
+        warehouse: {
+          ...state.warehouse,
+          plants: newPlants,
+        },
+      };
+    }
+    // 出售动物幼崽
+    case "SELL_ANIMAL": {
+      const newOwnedAnimals = { ...state.warehouse.ownedAnimals };
+      newOwnedAnimals[action.animalType] = (newOwnedAnimals[action.animalType] || 0) - action.count;
+      message.success('出售成功')
+      return {
+        ...state,
+        money: state.money + ANIMALS[action.animalType].price * action.count,
+        warehouse: {
+          ...state.warehouse,
+          ownedAnimals: newOwnedAnimals,
+        },
+      };
+    }
+    // 出售动物产品
+    case "SELL_ANIMAL_PRODUCT": {
+      const newAnimalProducts = { ...state.warehouse.animalProducts };
+      newAnimalProducts[action.animalProductType] = (newAnimalProducts[action.animalProductType] || 0) - action.count;
+      message.success('出售成功')
+      return {
+        ...state,
+        money: state.money + ANIMAL_PRODUCTS[action.animalProductType].price * action.count,
+        warehouse: {
+          ...state.warehouse,
+          animalProducts: newAnimalProducts,
+        },
+      };
+    }
+    case "REMOVE_PLANT": {
+      const plant = state.plantedCrops.find(crop => crop.id === action.id);
+      if (!plant) return state;
+      
+      const removeCost = Math.ceil(PLANTS[plant.type].purchasePrice * 0.1);
+      if (state.money < removeCost) {
+        message.error("金币不足，无法铲除");
+        return state;
+      }
+      message.success('铲除成功')
+      return {
+        ...state,
+        money: state.money - removeCost,
+        plantedCrops: state.plantedCrops.filter(crop => crop.id !== action.id)
       };
     }
     default:

@@ -34,7 +34,6 @@ export type AnimalProductType =
   | 'wool' 
   | 'eggs' 
   | 'feathers'
-  // | 'fur'
 
 export type AnimalType = 
   | 'pig' 
@@ -42,13 +41,15 @@ export type AnimalType =
   | 'sheep' 
   | 'chicken'
   | 'duck' 
-  // | 'dog';
 
 // 养殖的动物
 export interface GrazingAnimal {
   id: string;
   type: AnimalType;
   name: string;
+  // 成熟价格
+  price: number;
+  description: string;
   grazedAt: number;
   position: number;
   maturityTime: number;

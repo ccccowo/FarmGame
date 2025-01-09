@@ -1,7 +1,7 @@
 import React from 'react';
 import { useGameState } from '../../context/GameContext';
 import { EQUIPMENT } from '../../utils/equipment';
-import { X, Tractor, Sprout, Pill } from 'lucide-react';
+import { X, Tractor, Sprout } from 'lucide-react';
 import { EquipmentType } from '../../types/equipment';
 
 const getIconForType = (type: string) => {
@@ -30,7 +30,7 @@ const EquipmentShop = () => {
   };
 
   const closeShop = () => {
-    dispatch({ type: 'SELECT_SHOP', shop: null });
+    dispatch({ type: 'SELECT_ACTION', action: null });
   };
 
   return (
