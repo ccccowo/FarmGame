@@ -59,6 +59,7 @@ export type GameAction =
   | { type: "SELL_ANIMAL"; id: string }
   | { type: "SELL_GRAZED_ANIMAL"; id: string }
   | { type: "SELL_ANIMAL_PRODUCT" }
+  | { type: "REMOVE_ANIMAL"; id: string }
   // 设备相关
   | { type: "BUY_EQUIPMENT"; equipmentType: EquipmentType }
   | { type: "SELECT_EQUIPMENT"; equipmentType: EquipmentType | null }

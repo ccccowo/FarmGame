@@ -91,17 +91,17 @@ export const MapCell: React.FC<MapCellProps> = ({
     if (canAnimal) {
       dispatch({ type: "GRAZE_ANIMAL", position: index });
     }
-
-    
   };
 
-  const handleRemovePlant = async(plantId: string) => {
+  const handleRemovePlant = async (plantId: string) => {
     setIsLoading(true);
     try {
-      const plant = state.plantedCrops.find(crop => crop.id === plantId);
+      const plant = state.plantedCrops.find((crop) => crop.id === plantId);
       if (!plant) return;
-      
-      const removeCost = Math.ceil(PLANTS[plant.type].purchasePrice * 0.1);
+
+      const removeCost = Math.ceil(
+        PLANTS[plant.type].purchasePrice * 0.1
+      );
       if (state.money < removeCost) {
         message.error("金币不足，无法铲除");
         return;
@@ -112,7 +112,9 @@ export const MapCell: React.FC<MapCellProps> = ({
         content: (
           <div>
             <p>是否确认铲除 {PLANTS[plant.type].name}？</p>
-            <p className="text-red-500">铲除后将失去该植物，且需要支付 ¥{removeCost} 的铲除费用</p>
+            <p className="text-red-500">
+              铲除后将失去该植物，且需要支付 ¥{removeCost} 的铲除费用
+            </p>
           </div>
         ),
         okText: "确认",
@@ -120,12 +122,41 @@ export const MapCell: React.FC<MapCellProps> = ({
         onOk: () => {
           dispatch({ type: "REMOVE_PLANT", id: plantId });
           message.success("铲除成功");
-        }
+        },
       });
     } catch (error) {
       message.error("操作失败，请重试");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleRemoveAnimal = async (animalId: string) => {
+    try {
+      const animal = state.grazingAnimals.find((a) => a.id === animalId);
+      if (!animal) return;
+
+      await Modal.confirm({
+        title: "确认取消放牧",
+        content: (
+          <div>
+            <p>是否确认取消放牧 {ANIMALS[animal.type].name}？</p>
+            <p>取消放牧后动物将返回仓库</p>
+            <p className="text-red-500">
+              取消放牧后需要支付 ¥
+              {Math.ceil(ANIMALS[animal.type].purchasePrice * 0.1)} 的取消费用
+            </p>
+          </div>
+        ),
+        okText: "确认",
+        cancelText: "取消",
+        onOk: () => {
+          dispatch({ type: "REMOVE_ANIMAL", id: animalId });
+          message.success("取消放牧成功");
+        },
+      });
+    } catch (error) {
+      message.error("操作失败，请重试");
     }
   };
 
@@ -287,6 +318,16 @@ export const MapCell: React.FC<MapCellProps> = ({
               )
             )}
             
+            <button
+              onClick={(e) => {
+                e.stopPropagation(); // 阻止事件冒泡
+                handleRemoveAnimal(grazingAnimal.id);
+              }}
+              className="absolute top-1 right-1 p-1 bg-red-100 hover:bg-red-200 rounded-full"
+            >
+              <X className="w-4 h-4 text-red-600" />
+            </button>
+
             {/* 进度条 */}
             <div className="absolute bottom-1 left-1 right-1 h-1 bg-gray-200/80 rounded-full overflow-hidden">
               <div

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useGameState } from "../../context/GameContext";
 import { PLANTS } from "../../utils/plants";
 import { ANIMALS,ANIMAL_PRODUCTS } from "../../utils/animals";
@@ -240,6 +240,14 @@ const Warehouse = () => {
       switch (activeTab) {
         case "seed": {
           const seedItems = Object.entries(state.warehouse.seeds).filter(([_, count]) => count > 0);
+          if (seedItems.length === 0) {
+            return (
+              <div className="flex flex-col items-center justify-center py-8 text-gray-500">
+                <Sprout className="w-12 h-12 mb-2" />
+                <p>还没有种子哦，快去商店购买吧！</p>
+              </div>
+            );
+          }
           return (
             <>
               <BatchOperationHeader
@@ -273,6 +281,14 @@ const Warehouse = () => {
         }
         case "plant": {
           const plantItems = Object.entries(state.warehouse.plants || {}).filter(([_, count]) => count > 0);
+          if (plantItems.length === 0) {
+            return (
+              <div className="flex flex-col items-center justify-center py-8 text-gray-500">
+                <Wheat className="w-12 h-12 mb-2" />
+                <p>还没有收获的作物，继续努力种植吧！</p>
+              </div>
+            );
+          }
           return (
             <>
               <BatchOperationHeader
@@ -306,6 +322,14 @@ const Warehouse = () => {
         }
         case "animal": {
           const animalItems = Object.entries(state.warehouse.ownedAnimals || {}).filter(([_, count]) => count > 0);
+          if (animalItems.length === 0) {
+            return (
+              <div className="flex flex-col items-center justify-center py-8 text-gray-500">
+                <Baby className="w-12 h-12 mb-2" />
+                <p>还没有动物哦，快去商店购买吧！</p>
+              </div>
+            );
+          }
           return (
             <>
               <BatchOperationHeader
@@ -339,6 +363,14 @@ const Warehouse = () => {
         }
         case "animalProduct": {
           const animalProductItems = Object.entries(state.warehouse.animalProducts || {}).filter(([_, count]) => count > 0);
+          if (animalProductItems.length === 0) {
+            return (
+              <div className="flex flex-col items-center justify-center py-8 text-gray-500">
+                <Milk className="w-12 h-12 mb-2" />
+                <p>还没有动物产品，继续照顾动物吧！</p>
+              </div>
+            );
+          }
           return (
             <>
               <BatchOperationHeader
@@ -372,6 +404,14 @@ const Warehouse = () => {
         }
         case "equipment": {
           const equipmentItems = Object.entries(state.warehouse.equipments).filter(([_, count]) => count > 0);
+          if (equipmentItems.length === 0) {
+            return (
+              <div className="flex flex-col items-center justify-center py-8 text-gray-500">
+                <Wrench className="w-12 h-12 mb-2" />
+                <p>还没有道具哦，快去商店购买吧！</p>
+              </div>
+            );
+          }
           return (
             <>
               <BatchOperationHeader

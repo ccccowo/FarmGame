@@ -1,4 +1,3 @@
-import React from 'react';
 import { useGameState } from '../../context/GameContext';
 import { ANIMALS } from '../../utils/animals';
 import { X } from 'lucide-react';

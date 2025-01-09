@@ -430,6 +430,27 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         plantedCrops: state.plantedCrops.filter(crop => crop.id !== action.id)
       };
     }
+    case "REMOVE_ANIMAL": {
+      const animal = state.grazingAnimals.find(a => a.id === action.id);
+      if (!animal) return state;
+      if (state.money < Math.ceil(ANIMALS[animal.type].purchasePrice * 0.1)) {
+        message.error("金币不足，无法取消放牧");
+        return state;
+      }
+      // 将动物返回仓库
+      const newOwnedAnimals = { ...state.warehouse.ownedAnimals };
+      newOwnedAnimals[animal.type] = (newOwnedAnimals[animal.type] || 0) + 1;
+      message.success('取消放牧成功')
+      return {
+        ...state,
+        money: state.money - Math.ceil(ANIMALS[animal.type].purchasePrice * 0.1),
+        grazingAnimals: state.grazingAnimals.filter(a => a.id !== action.id),
+        warehouse: {
+          ...state.warehouse,
+          ownedAnimals: newOwnedAnimals
+        }
+      };
+    }
     default:
       return state;
   }

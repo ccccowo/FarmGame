@@ -1,4 +1,3 @@
-import React from 'react';
 import { useGameState } from '../../context/GameContext';
 import { EQUIPMENT } from '../../utils/equipment';
 import { X, Tractor, Sprout } from 'lucide-react';

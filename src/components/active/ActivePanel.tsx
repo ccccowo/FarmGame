@@ -1,7 +1,7 @@
 import { useGameState } from '../../context/GameContext';
 import { ActionButton } from '../ui/ActionButton';
 import { getActionMenuItems } from '../../utils/actionMenuItems';
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 
 const ActionPanel = () => {
   const { state, dispatch } = useGameState();
