@@ -6,6 +6,17 @@ import { GrazingAnimal, AnimalProductType, AnimalProduct } from "../types/animal
 import { GameState, GameAction } from "../types/game";
 import { message } from "antd";
 
+const GAME_STATE_KEY = 'farm_game_state';
+
+// 保存游戏状态
+const saveGameState = (state: GameState) => {
+  try {
+    localStorage.setItem(GAME_STATE_KEY, JSON.stringify(state));
+  } catch (error) {
+    console.error('Failed to save game state:', error);
+  }
+};
+
 // 添加GameState与GameAction之间的映射关系
 export function gameReducer(state: GameState, action: GameAction): GameState {
   console.log("gameReducer");
@@ -316,7 +327,6 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         message.success('使用成功')
         return {
           ...state,
-          selectedEquipment: null,
           plantedCrops: newPlantedCrops,
           warehouse: {
             ...state.warehouse,
@@ -351,7 +361,6 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         message.success('使用成功')
         return {
           ...state,
-          selectedEquipment: null,
           grazingAnimals: newGrazingAnimals,
           warehouse: {
             ...state.warehouse,
@@ -477,8 +486,34 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
   })();
 
   // 添加最后执行的动作类型
-  return {
+  const finalState = {
     ...newState,
     lastAction: action.type
   };
+
+  // 在重要操作后立即保存状态
+  const importantActions = [
+    'PLANT_PLANT',
+    'HARVEST_PLANT',
+    'REMOVE_PLANT',
+    'GRAZE_ANIMAL',
+    'COLLECT_ANIMAL_PRODUCTS',
+    'REMOVE_ANIMAL',
+    'BUY_PLANT',
+    'BUY_ANIMAL',
+    'SELL_PLANT',
+    'SELL_ANIMAL',
+    'SELL_SEED',
+    'SELL_ANIMAL_PRODUCT',
+    'BUY_EQUIPMENT',
+    'USE_EQUIPMENT_TO_PLANT',
+    'USE_EQUIPMENT_TO_ANIMAL',
+    'RESET_GAME'
+  ];
+
+  if (importantActions.includes(action.type)) {
+    saveGameState(finalState);
+  }
+
+  return finalState;
 }

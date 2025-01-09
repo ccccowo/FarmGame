@@ -59,9 +59,10 @@ export const MapCell: React.FC<MapCellProps> = ({
           });
         }
       }
+      return;
     }
     // 当种下作物时，并且成熟时，可以收获
-    if (plantedCrop) {
+    if (plantedCrop && !canUse) {
       if (plantedCrop.isReady) {
         dispatch({ type: "HARVEST_PLANT", id: plantedCrop.id });
       }
@@ -69,16 +70,12 @@ export const MapCell: React.FC<MapCellProps> = ({
     }
 
     // 当没有种下作物时，并且有种植选择时，可以种植
-    if (canPlant) {
+    if (canPlant && !canUse) {
       dispatch({ type: "PLANT_PLANT", position: index });
     }
 
     // 当正在放牧动物时，并且动物产物成熟时，可以收获
-    if (grazingAnimal) {
-      if (!grazingAnimal.product) {
-        message.error("动物产品异常");
-        return;
-      }
+    if (grazingAnimal && !canUse) {
       if (grazingAnimal.product.isMature) {
         dispatch({ type: "COLLECT_ANIMAL_PRODUCTS", id: grazingAnimal.id });
       } else {
@@ -88,7 +85,7 @@ export const MapCell: React.FC<MapCellProps> = ({
     }
 
     // 当没有放牧动物时，并且有动物选择时，可以养殖
-    if (canAnimal) {
+    if (canAnimal && !canUse) {
       dispatch({ type: "GRAZE_ANIMAL", position: index });
     }
   };
