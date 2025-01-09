@@ -9,13 +9,33 @@ import AnimalShop from "./components/active/AnimalShop"
 import WareHouse from "./components/active/WareHouse"
 import { FarmTab } from "./components/tab/FarmTab";
 import { useGameState } from "./context/GameContext";
+import { Modal } from 'antd';
+
 function AppContent() {
-  const { state } = useGameState();
+  const { state, resetGame } = useGameState();
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-50 to-green-100">
       <div className="container mx-auto px-4 py-6">
-        <GameHeader />
+        <div className="mb-4">
+          <GameHeader />
+          <div className="mt-2 flex justify-end">
+            <button
+              onClick={() => {
+                Modal.confirm({
+                  title: '确认重置游戏',
+                  content: '重置后游戏将恢复到初始状态，所有进度将丢失。确定要重置吗？',
+                  okText: '确认',
+                  cancelText: '取消',
+                  onOk: resetGame
+                });
+              }}
+              className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition-colors"
+            >
+              重置游戏
+            </button>
+          </div>
+        </div>
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-6">
           {/* 游戏地图   */}
           <div className="lg:col-span-9">

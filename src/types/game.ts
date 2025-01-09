@@ -15,6 +15,8 @@ export interface GameState {
   plantedCrops: PlantedCrop[];
   // 正在放牧的动物
   grazingAnimals: GrazingAnimal[];
+  // 最后一次执行的动作类型
+  lastAction?: string;
   // 仓库（植物，动物产物）
   warehouse: {
     // 购买了的种子
@@ -75,5 +77,4 @@ export type GameAction =
   | { type: "SELL_ANIMAL"; animalType: AnimalType | string; count: number }
   | { type: "SELL_ANIMAL_PRODUCT"; animalProductType: AnimalProductType | string; count: number }
   | { type: "SELL_EQUIPMENT"; equipmentType: EquipmentType | string; count: number }
-
-
+  | { type: "RESET_GAME" };
