@@ -2,7 +2,17 @@ import React, { useState } from "react";
 import { useGameState } from "../../context/GameContext";
 import { PlantedCrop } from "../../types/plants";
 import { PLANTS } from "../../utils/plants";
-import { Sprout, Check, PiggyBank, PawPrint, X } from "lucide-react";
+import {
+  Sprout,
+  Check,
+  PiggyBank,
+  PawPrint,
+  X,
+  Apple,
+  Egg,
+  Wheat,
+  Flower2,
+} from "lucide-react";
 import { GrazingAnimal } from "../../types/animals";
 import { ANIMALS } from "../../utils/animals";
 import { message, Modal } from "antd";
@@ -97,9 +107,7 @@ export const MapCell: React.FC<MapCellProps> = ({
       const plant = state.plantedCrops.find((crop) => crop.id === plantId);
       if (!plant) return;
 
-      const removeCost = Math.ceil(
-        PLANTS[plant.type].purchasePrice * 0.1
-      );
+      const removeCost = Math.ceil(PLANTS[plant.type].purchasePrice * 0.1);
       if (state.money < removeCost) {
         message.error("金币不足，无法铲除");
         return;
@@ -207,7 +215,7 @@ export const MapCell: React.FC<MapCellProps> = ({
       // 计算成熟还需要多少时间（总时间-（now - 种下时间））
       const timeRemaining = Math.max(
         0,
-        (plantedCrop.growthTime - (now - plantedCrop.plantedAt))
+        plantedCrop.growthTime - (now - plantedCrop.plantedAt)
       );
       return `${plant.name} (还需 ${formatTimeRemaining(timeRemaining)} 成熟)`;
     }
@@ -218,14 +226,14 @@ export const MapCell: React.FC<MapCellProps> = ({
       // 动物未成熟
       if (!grazingAnimal.isMature) {
         return `${animal.name} (还需 ${formatTimeRemaining(
-          (grazingAnimal.maturityTime - (now - grazingAnimal.grazedAt))
+          grazingAnimal.maturityTime - (now - grazingAnimal.grazedAt)
         )} 成熟`;
       }
       // 动物成熟，动物产物未成熟
       else if (grazingAnimal.product && !grazingAnimal.product.isMature) {
         return `${animal.name} (动物产物还需 ${formatTimeRemaining(
-          (grazingAnimal.product.maturityTime -
-            (now - grazingAnimal.product.producedAt))
+          grazingAnimal.product.maturityTime -
+            (now - grazingAnimal.product.producedAt)
         )} 成熟)`;
       }
       // 动物成熟，动物产物成熟
@@ -266,6 +274,12 @@ export const MapCell: React.FC<MapCellProps> = ({
           <div className="relative w-full h-full flex items-center justify-center">
             {plantedCrop.isReady ? (
               <Check className="w-6 h-6 text-green-600" />
+            ) : plantedCrop.type === "apple" ? (
+              <Apple className="w-6 h-6 text-green-600" />
+            ) : plantedCrop.type === "wheat" ? (
+              <Wheat className="w-6 h-6 text-green-600" />
+            ) : plantedCrop.type === "rose" ? (
+              <Flower2 className="w-6 h-6 text-green-600"></Flower2>
             ) : (
               <Sprout className="w-6 h-6 text-green-600" />
             )}
@@ -296,20 +310,16 @@ export const MapCell: React.FC<MapCellProps> = ({
               // 动物已成熟
               grazingAnimal.product?.isMature ? (
                 <Check className="w-6 h-6 text-green-600" />
-              ) : (
-                grazingAnimal.type === "pig" ? (
-                  <PiggyBank className="w-6 h-6 text-amber-600" />
-                ) : (
-                  <PawPrint className="w-6 h-6 text-amber-600" />
-                )
-              )
-            ) : (
-              // 动物未成熟
-              grazingAnimal.type === "pig" ? (
+              ) : grazingAnimal.type === "pig" ? (
                 <PiggyBank className="w-6 h-6 text-amber-600" />
               ) : (
                 <PawPrint className="w-6 h-6 text-amber-600" />
               )
+            ) : // 动物未成熟
+            grazingAnimal.type === "pig" ? (
+              <PiggyBank className="w-6 h-6 text-amber-600" />
+            ) : (
+              <PawPrint className="w-6 h-6 text-amber-600" />
             )}
 
             <button
@@ -327,9 +337,11 @@ export const MapCell: React.FC<MapCellProps> = ({
               <div
                 className="h-full bg-amber-500 rounded-full transition-all duration-1000 ease-linear"
                 style={{
-                  width: `${grazingAnimal.isMature
-                    ? getAnimalProductProgressPercentage()
-                    : getAnimalProgressPercentage()}%`
+                  width: `${
+                    grazingAnimal.isMature
+                      ? getAnimalProductProgressPercentage()
+                      : getAnimalProgressPercentage()
+                  }%`,
                 }}
               />
             </div>

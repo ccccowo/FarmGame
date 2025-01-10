@@ -6,7 +6,7 @@ const GAME_STATE_KEY = 'farm_game_state';
 const SAVE_INTERVAL = 5000; // 每5秒保存一次状态
 
 const initialState: GameState = {
-  money: 10000,
+  money: 1000,
   selectedAction: null,
   selectedPlant: null,
   selectedAnimal: null,
@@ -14,8 +14,10 @@ const initialState: GameState = {
   plantedCrops: [],
   grazingAnimals: [],
   warehouse: {
-    seeds: {},
-    ownedAnimals: {},
+    seeds: {
+    },
+    ownedAnimals: {
+    },
     plants: {},
     animalProducts: {},
     equipments:{}

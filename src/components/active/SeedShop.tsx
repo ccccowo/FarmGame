@@ -37,7 +37,7 @@ const SeedShop = () => {
               <div>
                 <h3 className="font-semibold">{plant.name}</h3>
                 <p className="text-sm text-gray-600">生长期: {formatTimeRemaining(plant.growthTime)}</p>
-                <p className="text-sm text-gray-600">售价: ¥{plant.purchasePrice}</p>
+                <p className="text-sm text-gray-600">售价: ¥{plant.price}</p>
               </div>
               <button
                 onClick={() => handleBuySeeds(plant.type as PlantType, plant.purchasePrice)}

@@ -22,7 +22,9 @@ export type PlantType =
   | 'osmanthus'
   | 'ginkgo'
   | 'rose'
-  | 'lily';
+  | 'lily'
+  | 'strawberry'
+  | 'grape';
 
 
 // 种植的作物

@@ -10,7 +10,8 @@ export type Equipment = {
   // 加快植物/动物成长速度多少倍
   efficiency?: number;
   // 作用对象
-  target?:string
+  target?: string;
 };
 
-export type EquipmentType = 'machine' | 'feed' | 'fertilizer'
+export type EquipmentType = "machine" | "feed" | "fertilizer" | "lowFertilizer"
+|'midFertilizer' | 'highFertilizer' | 'lowFeed'| 'midFeed' | 'highFeed'
