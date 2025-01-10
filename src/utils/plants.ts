@@ -5,7 +5,7 @@ export const PLANTS: Record<string, Plant> = {
     id: 'wheat',
     type: 'wheat',
     name: '小麦',
-    growthTime: 30000,  // 30秒
+    growthTime: 30 * 1000,  // 30秒
     price: 50,
     purchasePrice: 10,
     description: '小麦是基本的粮食作物，可以用来制作面包和面粉。',
@@ -14,7 +14,7 @@ export const PLANTS: Record<string, Plant> = {
     id: 'corn',
     type: 'corn',
     name: '玉米',
-    growthTime: 40000,  // 40秒
+    growthTime: 60 * 1000,  // 60秒
     price: 75,
     purchasePrice: 10,
     description: '玉米是基本的玉米作物，可以用来制作玉米饼和玉米汤。',
@@ -23,7 +23,7 @@ export const PLANTS: Record<string, Plant> = {
     id: 'vegetables',
     type: 'vegetables',
     name: '蔬菜',
-    growthTime: 20000,  // 20秒
+    growthTime: 100000,  // 100秒
     price: 100,
     purchasePrice: 10,
     description: '蔬菜是基本的蔬菜作物，可以用来制作蔬菜沙拉和蔬菜汤。',

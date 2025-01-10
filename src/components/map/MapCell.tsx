@@ -7,6 +7,7 @@ import { GrazingAnimal } from "../../types/animals";
 import { ANIMALS } from "../../utils/animals";
 import { message, Modal } from "antd";
 import { EQUIPMENT } from "../../utils/equipment";
+import { formatTimeRemaining } from "../../utils/timeUtils";
 
 interface MapCellProps {
   index: number;
@@ -118,7 +119,6 @@ export const MapCell: React.FC<MapCellProps> = ({
         cancelText: "取消",
         onOk: () => {
           dispatch({ type: "REMOVE_PLANT", id: plantId });
-          message.success("铲除成功");
         },
       });
     } catch (error) {
@@ -207,11 +207,9 @@ export const MapCell: React.FC<MapCellProps> = ({
       // 计算成熟还需要多少时间（总时间-（now - 种下时间））
       const timeRemaining = Math.max(
         0,
-        Math.ceil(
-          (plantedCrop.growthTime - (now - plantedCrop.plantedAt)) / 1000
-        )
+        (plantedCrop.growthTime - (now - plantedCrop.plantedAt))
       );
-      return `${plant.name} (还需 ${timeRemaining} 秒)`;
+      return `${plant.name} (还需 ${formatTimeRemaining(timeRemaining)} 成熟)`;
     }
 
     // 放牧动物时
@@ -219,17 +217,16 @@ export const MapCell: React.FC<MapCellProps> = ({
       const animal = ANIMALS[grazingAnimal.type];
       // 动物未成熟
       if (!grazingAnimal.isMature) {
-        return `${animal.name} (还需 ${Math.ceil(
-          (grazingAnimal.maturityTime - (now - grazingAnimal.grazedAt)) / 1000
-        )} 秒)成熟`;
+        return `${animal.name} (还需 ${formatTimeRemaining(
+          (grazingAnimal.maturityTime - (now - grazingAnimal.grazedAt))
+        )} 成熟`;
       }
       // 动物成熟，动物产物未成熟
       else if (grazingAnimal.product && !grazingAnimal.product.isMature) {
-        return `${animal.name} (动物产物还需 ${Math.ceil(
+        return `${animal.name} (动物产物还需 ${formatTimeRemaining(
           (grazingAnimal.product.maturityTime -
-            (now - grazingAnimal.product.producedAt)) /
-            1000
-        )} 秒)生成`;
+            (now - grazingAnimal.product.producedAt))
+        )} 成熟)`;
       }
       // 动物成熟，动物产物成熟
       else if (grazingAnimal.product && grazingAnimal.product.isMature) {
@@ -272,7 +269,7 @@ export const MapCell: React.FC<MapCellProps> = ({
             ) : (
               <Sprout className="w-6 h-6 text-green-600" />
             )}
-            
+
             <button
               onClick={(e) => {
                 e.stopPropagation(); // 阻止事件冒泡
@@ -282,7 +279,7 @@ export const MapCell: React.FC<MapCellProps> = ({
             >
               <X className="w-4 h-4 text-red-600" />
             </button>
-            
+
             <div className="absolute bottom-1 left-1 right-1 h-1 bg-gray-200/80 rounded-full overflow-hidden">
               <div
                 className="h-full bg-green-500 rounded-full transition-all duration-1000 ease-linear"
@@ -314,7 +311,7 @@ export const MapCell: React.FC<MapCellProps> = ({
                 <PawPrint className="w-6 h-6 text-amber-600" />
               )
             )}
-            
+
             <button
               onClick={(e) => {
                 e.stopPropagation(); // 阻止事件冒泡
@@ -329,10 +326,10 @@ export const MapCell: React.FC<MapCellProps> = ({
             <div className="absolute bottom-1 left-1 right-1 h-1 bg-gray-200/80 rounded-full overflow-hidden">
               <div
                 className="h-full bg-amber-500 rounded-full transition-all duration-1000 ease-linear"
-                style={{ 
-                  width: `${grazingAnimal.isMature 
-                    ? getAnimalProductProgressPercentage() 
-                    : getAnimalProgressPercentage()}%` 
+                style={{
+                  width: `${grazingAnimal.isMature
+                    ? getAnimalProductProgressPercentage()
+                    : getAnimalProgressPercentage()}%`
                 }}
               />
             </div>

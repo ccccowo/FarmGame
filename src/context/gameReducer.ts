@@ -223,8 +223,14 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
             isMature: now >= animal.grazedAt + animal.maturityTime,
             product: animal.product && {
               ...animal.product,
+              producedAt:
+                now >= animal.grazedAt + animal.maturityTime
+                  ? animal.product.producedAt
+                  : now ,
               isMature:
-                now >= animal.product.producedAt + animal.product.maturityTime,
+                now >= animal.grazedAt + animal.maturityTime
+                  ? animal.product.producedAt + animal.product.maturityTime <= Date.now()
+                  : false
             },
           })),
         };
@@ -239,13 +245,14 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         const newAnimalProducts = { ...state.warehouse.animalProducts };
         let newGrazingAnimals: GrazingAnimal[] = state.grazingAnimals;
         if (product && type) {
-          // 重置该动物产品开始产生的时间
+          // 重置该动物产品开始产生的时间和总时间
           newGrazingAnimals = state.grazingAnimals.map((animal) => {
             if (animal.id === action.id && animal.product) {
               return {
                 ...animal,
                 product: {
                   ...animal.product,
+                  maturityTime: animal.product.maturityTime,
                   producedAt: Date.now(),
                 },
               };
@@ -303,12 +310,16 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
           (crop) => crop.id === action.id
         );
         let newPlantedCrops: PlantedCrop[] = [...state.plantedCrops];
-
+        const now = Date.now();
+        // 如果植物已经成熟，不能使用
+        if (plantedCrop && plantedCrop.isReady) {
+          message.error("植物已经成熟，不能使用");
+          return state;
+        }
         // 植物已经生长时间缩短
         plantedCrop.growthTime = plantedCrop.growthTime / efficiency;
 
         // 更新植物成熟状态
-        const now = Date.now();
         if (now >= plantedCrop.plantedAt + plantedCrop.growthTime) {
           plantedCrop.isReady = true;
         }
@@ -323,7 +334,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         // 道具数量--
         const newEquipments = { ...state.warehouse.equipments };
         newEquipments[equipment.type] = (newEquipments[equipment.type] || 0) - 1;
-
+        
         message.success('使用成功')
         return {
           ...state,
@@ -339,26 +350,45 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         const equipment = EQUIPMENT[action.equipmentType];
         const efficiency = equipment.efficiency;
         const animal = state.grazingAnimals.find(
-          (animal) => animal.id === action.id
+          (a) => a.id === action.id
         );
-        let newGrazingAnimals: GrazingAnimal[] = state.grazingAnimals;
-        animal.maturityTime = animal.maturityTime / efficiency;
-        // 更新动物成熟状态
         const now = Date.now();
-        if (now >= animal.grazedAt + animal.maturityTime) {
-          animal.isMature = true;
+        let newGrazingAnimals: GrazingAnimal[] = state.grazingAnimals;
+        // 如果动物已经成熟并且动物产品也成熟，不能使用
+        if (animal && animal.isMature && animal.product && animal.product.isMature) {
+          message.error("动物产品已经成熟，不能使用");
+          return state;
         }
+        // 如果动物没有成熟，缩短动物的生长时间
+        if (!animal.isMature) {
+          animal.maturityTime = animal.maturityTime / efficiency;
+          // 更新动物成熟状态
+          if (now >= animal.grazedAt + animal.maturityTime) {
+            animal.isMature = true;
+          }
+        }
+        // 如果动物已经成熟，缩短动物产品的成熟时间
+        if (animal.product && !animal.product.isMature) {
+          animal.product.maturityTime = animal.product.maturityTime / efficiency;
+          // 更新动物产品成熟状态
+          if (now >= animal.product.producedAt + animal.product.maturityTime) {
+            animal.product.isMature = true;
+          }
+        }
+
         // 更新GrazingAnimals
-        newGrazingAnimals = state.grazingAnimals.map((animal) => {
-          if (animal.id === action.id) {
+        newGrazingAnimals = state.grazingAnimals.map((a) => {
+          if (a.id === action.id) {
             return animal;
           }
-          return animal;
+          return a;
         });
+
         // 道具数量--
         const newEquipments = { ...state.warehouse.equipments };
         newEquipments[equipment.type] = (newEquipments[equipment.type] || 0) - 1;
         message.success('使用成功')
+
         return {
           ...state,
           grazingAnimals: newGrazingAnimals,
@@ -427,7 +457,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       case "REMOVE_PLANT": {
         const plant = state.plantedCrops.find(crop => crop.id === action.id);
         if (!plant) return state;
-        
+
         const removeCost = Math.ceil(PLANTS[plant.type].purchasePrice * 0.1);
         if (state.money < removeCost) {
           message.error("金币不足，无法铲除");
